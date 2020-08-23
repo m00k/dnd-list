@@ -1,0 +1,13 @@
+.ListItem {
+  background-color: #fff;
+  color: #424242;
+  font-size: 2rem;
+  height: 50px;
+  line-height: 50px;
+  margin: 2px;
+  padding: 16px;
+  width: 300px;
+  text-align: center;
+  text-transform: uppercase;
+  user-select: none;
+}
