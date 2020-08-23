@@ -14,33 +14,29 @@ const DEFAULT_ITEMS: IListItem[] = [
 
 const List: React.FC = () => {
   const [items, setItems] = useState(DEFAULT_ITEMS);
+  const [dragIdx, setDragIdx] = useState(-1);
 
   const handleDragStart = (ev: React.DragEvent, idx: number) => {
-    const {dataTransfer, target} = ev;
-    dataTransfer.setData('item', JSON.stringify(idx));
+    setDragIdx(idx);
+    ev.dataTransfer.effectAllowed = 'move';
+    ev.dataTransfer.setData('item', JSON.stringify(idx));
     // this will hide the item in the list
     // while the dragged item still being visible
-    setTimeout(() => (target as HTMLElement).style.visibility = 'hidden');
+    //setTimeout(() => (target as HTMLElement).style.visibility = 'hidden');
   };
 
-  const handleDragOver = (ev: React.DragEvent) => {
-    console.log('#######', 'dragover');
+  const handleDragOver = (ev: React.DragEvent, dropIdx: number) => {
     ev.preventDefault();
+    setItems(items => move(items, dragIdx, dropIdx));
+    setDragIdx(dropIdx);
   };
 
   const handleDragEnd = (ev: React.DragEvent) => {
-    console.log('#######', 'dragend');
     const {target} = ev;
     (target as HTMLElement).style.visibility = 'visible';
+    setDragIdx(-1);
   };
 
-  const handleDrop = (ev: React.DragEvent, dropIdx: number) => {
-    const dataJson = ev.dataTransfer.getData('item')
-    const dragIdx = JSON.parse(dataJson);
-    console.log('#######', 'drop', dragIdx, dropIdx);
-    setItems(items => move(items, dragIdx, dropIdx));
-};
-  
   return (
     <ul
       className='List'
@@ -50,10 +46,10 @@ const List: React.FC = () => {
         <ListItem
           key={item.name}
           item={item}
+          style={i === dragIdx ? {opacity: 0.8} : null}
           draggable='true'
           onDragStart={(ev: React.DragEvent) => handleDragStart(ev, i)}
-          onDragOver={handleDragOver}
-          onDrop={(ev: React.DragEvent) => handleDrop(ev, i)}
+          onDragOver={(ev: React.DragEvent) => handleDragOver(ev, i)}
           onDragEnd={handleDragEnd}
         />)}
     </ul>
