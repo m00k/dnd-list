@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './List.css';
 import ListItem, { IListItem } from './ListItem';
+import { move } from './util';
 
 const DEFAULT_ITEMS: IListItem[] = [
   { name: 'foo' },
@@ -37,21 +38,7 @@ const List: React.FC = () => {
     const dataJson = ev.dataTransfer.getData('item')
     const dragIdx = JSON.parse(dataJson);
     console.log('#######', 'drop', dragIdx, dropIdx);
-    setItems(items => {
-      return dragIdx < dropIdx
-      ? [
-        ...items.slice(0, dragIdx),
-        ...items.slice(dragIdx + 1, dropIdx + 1),
-        ...items.slice(dragIdx, dragIdx + 1),
-        ...items.slice(dropIdx + 1),
-      ]
-      : [
-        ...items.slice(0, dropIdx),
-        ...items.slice(dragIdx, dragIdx + 1),
-        ...items.slice(dropIdx, dragIdx),
-        ...items.slice(dragIdx + 1),
-      ];
-    });
+    setItems(items => move(items, dragIdx, dropIdx));
 };
   
   return (
